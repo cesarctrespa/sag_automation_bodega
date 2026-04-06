@@ -7,14 +7,17 @@ from datetime import datetime
 import os
 import sys
 
+
 # ===== CONFIG =====
 def get_base_path():
-    if hasattr(sys, '_MEIPASS'):
+    if hasattr(sys, "_MEIPASS"):
         return sys._MEIPASS
     return os.path.abspath(".")
 
+
 IMAGES_PATH = os.path.join(get_base_path(), "images") + "\\"
 CONFIDENCE = 0.6
+
 
 # ===== HELPERS =====
 def get_date_input():
@@ -36,14 +39,13 @@ def get_date_input():
         except ValueError:
             print("❌ Formato inválido. Use DD-MM-YYYY\n")
 
+
 def wait_and_click(image, timeout=10, confidence=CONFIDENCE, fallback=None):
     start = time.time()
     while time.time() - start < timeout:
         try:
             location = pyautogui.locateCenterOnScreen(
-                IMAGES_PATH + image,
-                confidence=confidence,
-                grayscale=True
+                IMAGES_PATH + image, confidence=confidence, grayscale=True
             )
             if location:
                 pyautogui.click(location)
@@ -59,6 +61,7 @@ def wait_and_click(image, timeout=10, confidence=CONFIDENCE, fallback=None):
         return True
     raise Exception(f"❌ Elemento no encontrado: {image}")
 
+
 def wait_until_visible(image, timeout=60, confidence=CONFIDENCE):
     start = time.time()
     while time.time() - start < timeout:
@@ -67,6 +70,7 @@ def wait_until_visible(image, timeout=60, confidence=CONFIDENCE):
             return True
         time.sleep(1)
     raise Exception(f"⏱️ Tiempo de espera agotado para: {image}")
+
 
 def wait_for_clipboard_change(timeout=30):
     old = pyperclip.paste()
@@ -79,13 +83,13 @@ def wait_for_clipboard_change(timeout=30):
         time.sleep(1)
     raise Exception("⏱️ El portapapeles no se actualizó")
 
+
 def read_clipboard_to_df(raw_data):
     try:
-        df = pd.read_csv(io.StringIO(raw_data), sep='\t')
+        df = pd.read_csv(io.StringIO(raw_data), sep="\t")
     except:
-        df = pd.read_csv(io.StringIO(raw_data), sep=';')
+        df = pd.read_csv(io.StringIO(raw_data), sep=";")
 
-    df = df.dropna(how='all')
+    df = df.dropna(how="all")
     df = df.drop_duplicates()
-
     return df

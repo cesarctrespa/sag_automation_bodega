@@ -7,12 +7,13 @@ from helpers import (
     wait_and_click,
     wait_until_visible,
     wait_for_clipboard_change,
-    read_clipboard_to_df
+    read_clipboard_to_df,
 )
 
 # ===== APP AUTH =====
 USUARIO = "mauricio"
 PASSWORD = "1234"
+
 
 # ===== NAVIGATION =====
 def navigate_to_report():
@@ -36,6 +37,7 @@ def navigate_to_report():
     pyautogui.press("enter")
 
     print("✅ Módulo de informe abierto")
+
 
 # ===== LOGIN =====
 def login_to_dapas():
@@ -73,6 +75,7 @@ def login_to_dapas():
 
     print("✅ Inicio de sesión completado")
 
+
 # ===== CONFIG =====
 def configure_report(fecha_inicio, fecha_fin):
     print("⚙️ Configurando el informe...")
@@ -98,6 +101,7 @@ def configure_report(fecha_inicio, fecha_fin):
     pyautogui.write(fecha_fin)
 
     print("✅ Informe configurado correctamente")
+
 
 # ===== FLOW =====
 def flow_facturas_movimientos():
@@ -139,11 +143,7 @@ def flow_facturas_movimientos():
     df = read_clipboard_to_df(raw_data)
 
     print("🧹 Procesando datos...")
-    df = df[[
-        "d_fecha_documento",
-        "k_sc_codigo_fuente",
-        "sc_nombre"
-    ]]
+    df = df[["d_fecha_documento", "k_sc_codigo_fuente", "sc_nombre"]]
 
     print("✅ Datos obtenidos correctamente\n")
     print(df.head())

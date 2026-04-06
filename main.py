@@ -10,6 +10,7 @@ APP_PASSWORD = "1914"
 
 pyautogui.FAILSAFE = True
 
+
 def app_login():
     print("=== 🔐 INICIO DE SESIÓN ===")
     for intento in range(3):
@@ -22,6 +23,7 @@ def app_login():
             print(f"❌ Credenciales inválidas ({intento + 1}/3)\n")
     raise Exception("🚫 Demasiados intentos fallidos")
 
+
 def show_menu():
     print("=== 📋 MENÚ PRINCIPAL ===")
     print("1. Facturas y movimiento de inventario - Documentos con artículos")
@@ -33,6 +35,7 @@ def show_menu():
         else:
             print("❌ Opción inválida. Intente nuevamente.\n")
 
+
 def run_selected_flow(option):
     if option == "1":
         return flow_facturas_movimientos()
@@ -41,6 +44,7 @@ def run_selected_flow(option):
         exit()
     else:
         print("❌ Opción inválida\n")
+
 
 def run_flow():
     print("🚀 Iniciando automatización...\n")
@@ -55,6 +59,7 @@ def run_flow():
             print("\n✅ Flujo ejecutado correctamente\n")
         else:
             print("\n⚠️ No se ejecutó ningún flujo\n")
+
 
 if __name__ == "__main__":
     try:
