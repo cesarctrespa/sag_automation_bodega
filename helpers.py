@@ -93,3 +93,20 @@ def read_clipboard_to_df(raw_data):
     df = df.dropna(how="all")
     df = df.drop_duplicates()
     return df
+
+
+def scroll_until_image(image, max_scrolls=10, direction="down"):
+    for i in range(max_scrolls):
+        location = pyautogui.locateCenterOnScreen(
+            IMAGES_PATH + image, confidence=0.8, grayscale=True
+        )
+        if location:
+            print(f"✅ Encontrado: {image}")
+            return location
+        print(f"🔄 Scrolling... intento {i+1}")
+        if direction == "down":
+            pyautogui.scroll(-500)
+        else:
+            pyautogui.scroll(500)
+        time.sleep(0.5)
+    raise Exception(f"❌ No se encontró después de scroll: {image}")

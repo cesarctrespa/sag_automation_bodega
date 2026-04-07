@@ -4,6 +4,7 @@ import subprocess
 
 from helpers import (
     get_date_input,
+    scroll_until_image,
     wait_and_click,
     wait_until_visible,
     wait_for_clipboard_change,
@@ -89,6 +90,11 @@ def configure_report(fecha_inicio, fecha_fin):
     wait_and_click("bodega_04.png", confidence=0.8, fallback=(880, 420))
     time.sleep(1)
 
+    # ===== NUEVO PASO =====
+    select_fuentes()
+
+    # ---- NAVEGAR A CAMPOS DE FECHA ----
+    print("📅 Navegando a campos de fecha...")
     for _ in range(3):
         pyautogui.press("tab")
         time.sleep(0.1)
@@ -101,6 +107,29 @@ def configure_report(fecha_inicio, fecha_fin):
     pyautogui.write(fecha_fin)
 
     print("✅ Informe configurado correctamente")
+
+
+def select_fuentes():
+    print("📌 Seleccionando fuentes (CM, FM, NE)...")
+
+    # Abrir modal
+    wait_and_click("seleccionar_fuentes.png", confidence=0.8)
+    time.sleep(1)
+
+    fuentes = ["CM.png", "FM.png", "NE.png"]
+
+    for fuente in fuentes:
+        print(f"🔍 Buscando fuente: {fuente}")
+
+        location = scroll_until_image(fuente)
+
+        pyautogui.click(location)
+        time.sleep(0.5)
+
+    # Click en Aceptar
+    print("✅ Confirmando selección...")
+    wait_and_click("aceptar_fuentes.png", confidence=0.8)
+    time.sleep(1)
 
 
 # ===== FLOW =====
