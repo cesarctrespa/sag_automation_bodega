@@ -48,13 +48,10 @@ def run_selected_flow(option):
 
 def run_flow():
     print("🚀 Iniciando automatización...\n")
-
     app_login()
-
     while True:
         opcion = show_menu()
         resultado = run_selected_flow(opcion)
-
         if resultado is not None:
             print("\n✅ Flujo ejecutado correctamente\n")
         else:

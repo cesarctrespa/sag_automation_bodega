@@ -62,10 +62,6 @@ def wait_and_click(image, timeout=10, confidence=CONFIDENCE, fallback=None):
     raise Exception(f"❌ Elemento no encontrado: {image}")
 
 
-import time
-import pyautogui
-
-
 def wait_until_visible(image, timeout=600, confidence=CONFIDENCE, region=None):
     full_path = IMAGES_PATH + image
     start = time.time()
