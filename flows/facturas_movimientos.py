@@ -77,6 +77,60 @@ def login_to_dapas():
     print("✅ Inicio de sesión completado")
 
 
+def select_bodega_04():
+    print("🏭 Seleccionando bodega: 04 - Mangueras...")
+
+    # Abrir modal
+    wait_and_click("seleccionar_bodegas.png", confidence=0.8)
+    time.sleep(1)
+
+    # Seleccionar checkbox 04 (click preciso)
+    print("🔍 Buscando checkbox de bodega 04...")
+    location = wait_until_visible("bodega_04_checkbox.png", confidence=0.8)
+
+    x, y = pyautogui.center(location)
+
+    # Ajuste opcional hacia la izquierda (checkbox suele estar ahí)
+    pyautogui.click(x - 115, y)
+    print(f"🖱️ Coordenadas: ({x-115}, {y})")
+    print("🖱️ Checkbox de bodega 04 seleccionado")
+
+    time.sleep(0.5)
+
+    # Confirmar
+    print("✅ Confirmando selección de bodega...")
+    wait_and_click("aceptar_bodegas.png", confidence=0.8)
+    time.sleep(0.2)
+
+
+def select_fuentes():
+    print("📌 Seleccionando fuentes (CM, FM, NE)...")
+
+    # Abrir modal
+    wait_and_click("seleccionar_fuentes.png", confidence=0.8)
+    time.sleep(1)
+
+    fuentes = ["CM.png", "FM.png", "NE.png"]
+    arrow_down_pos = (930, 522)
+
+    for fuente in fuentes:
+        print(f"🔍 Buscando fuente: {fuente}")
+
+        location = scroll_until_image(fuente, arrow_down_pos)
+
+        x, y = pyautogui.center(location)
+
+        pyautogui.click(x - 115, y)
+        print(f"🖱️ Coordenadas: ({x-115}, {y})")
+        print(f"🖱️ Fuente seleccionada: {fuente}")
+        time.sleep(0.5)
+
+    # Confirmar
+    print("✅ Confirmando selección...")
+    wait_and_click("aceptar_fuentes.png", confidence=0.8)
+    time.sleep(0.2)
+
+
 # ===== CONFIG =====
 def configure_report(fecha_inicio, fecha_fin):
     print("⚙️ Configurando el informe...")
@@ -84,13 +138,7 @@ def configure_report(fecha_inicio, fecha_fin):
     wait_and_click("otros_05b.png", confidence=0.8, fallback=(70, 200))
     time.sleep(1)
 
-    wait_and_click("bodega_dropdown.png", confidence=0.8, fallback=(995, 340))
-    time.sleep(1)
-
-    wait_and_click("bodega_04.png", confidence=0.8, fallback=(880, 420))
-    time.sleep(1)
-
-    # ===== NUEVO PASO =====
+    select_bodega_04()
     select_fuentes()
 
     # ---- NAVEGAR A CAMPOS DE FECHA ----
@@ -107,29 +155,6 @@ def configure_report(fecha_inicio, fecha_fin):
     pyautogui.write(fecha_fin)
 
     print("✅ Informe configurado correctamente")
-
-
-def select_fuentes():
-    print("📌 Seleccionando fuentes (CM, FM, NE)...")
-
-    # Abrir modal
-    wait_and_click("seleccionar_fuentes.png", confidence=0.8)
-    time.sleep(1)
-
-    fuentes = ["CM.png", "FM.png", "NE.png"]
-
-    for fuente in fuentes:
-        print(f"🔍 Buscando fuente: {fuente}")
-
-        location = scroll_until_image(fuente)
-
-        pyautogui.click(location)
-        time.sleep(0.5)
-
-    # Click en Aceptar
-    print("✅ Confirmando selección...")
-    wait_and_click("aceptar_fuentes.png", confidence=0.8)
-    time.sleep(1)
 
 
 # ===== FLOW =====
@@ -161,7 +186,7 @@ def flow_facturas_movimientos():
     wait_and_click("exportar.png", confidence=0.8, fallback=(390, 100))
     time.sleep(0.2)
 
-    wait_and_click("clipboard_option.png", confidence=0.8, fallback=(300, 120))
+    wait_and_click("clipboard_option.png", confidence=0.8, fallback=(385, 167))
 
     time.sleep(2)
     pyautogui.press("enter")

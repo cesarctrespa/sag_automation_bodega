@@ -16,7 +16,7 @@ def get_base_path():
 
 
 IMAGES_PATH = os.path.join(get_base_path(), "images") + "\\"
-CONFIDENCE = 0.6
+CONFIDENCE = 0.8
 
 
 # ===== HELPERS =====
@@ -62,14 +62,26 @@ def wait_and_click(image, timeout=10, confidence=CONFIDENCE, fallback=None):
     raise Exception(f"❌ Elemento no encontrado: {image}")
 
 
-def wait_until_visible(image, timeout=60, confidence=CONFIDENCE):
+import time
+import pyautogui
+
+
+def wait_until_visible(image, timeout=600, confidence=CONFIDENCE, region=None):
+    full_path = IMAGES_PATH + image
     start = time.time()
-    while time.time() - start < timeout:
-        if pyautogui.locateOnScreen(IMAGES_PATH + image, confidence=confidence):
-            print(f"👁️ Elemento visible: {image}")
-            return True
-        time.sleep(1)
-    raise Exception(f"⏱️ Tiempo de espera agotado para: {image}")
+    while True:
+        try:
+            location = pyautogui.locateOnScreen(
+                full_path, confidence=confidence, grayscale=True, region=region
+            )
+            if location:
+                print(f"👁️ Elemento visible: {image}")
+                return location
+        except Exception as e:
+            print(f"⚠️ Error al escanear la pantalla: {e}")
+        if time.time() - start > timeout:
+            raise TimeoutError(f"⏱️ Tiempo de espera agotado para: {image}")
+        time.sleep(0.5)
 
 
 def wait_for_clipboard_change(timeout=30):
@@ -95,18 +107,23 @@ def read_clipboard_to_df(raw_data):
     return df
 
 
-def scroll_until_image(image, max_scrolls=10, direction="down"):
-    for i in range(max_scrolls):
-        location = pyautogui.locateCenterOnScreen(
-            IMAGES_PATH + image, confidence=0.8, grayscale=True
+def scroll_until_image(image, arrow_pos, confidence=0.85, max_clicks=30):
+    print(f"🔍 Buscando imagen con navegación: {image}")
+    full_path = os.path.join(IMAGES_PATH, image)
+    for i in range(max_clicks):
+        try:
+            location = pyautogui.locateOnScreen(
+                full_path, confidence=confidence, grayscale=True
+            )
+
+            if location:
+                print(f"✅ Encontrado: {image}")
+                return location
+        except pyautogui.ImageNotFoundException:
+            pass
+        pyautogui.click(arrow_pos[0], arrow_pos[1])
+        print(
+            f"🔽 Click en flecha ({arrow_pos[0]}, {arrow_pos[1]}) [{i+1}/{max_clicks}]"
         )
-        if location:
-            print(f"✅ Encontrado: {image}")
-            return location
-        print(f"🔄 Scrolling... intento {i+1}")
-        if direction == "down":
-            pyautogui.scroll(-500)
-        else:
-            pyautogui.scroll(500)
-        time.sleep(0.5)
-    raise Exception(f"❌ No se encontró después de scroll: {image}")
+        time.sleep(0.2)
+    raise Exception(f"❌ No se encontró la imagen: {image}")
