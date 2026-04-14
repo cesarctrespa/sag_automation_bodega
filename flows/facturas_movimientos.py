@@ -4,11 +4,13 @@ import subprocess
 
 from helpers import (
     get_date_input,
+    reset_checkboxes,
     scroll_until_image,
     wait_and_click,
     wait_until_visible,
     wait_for_clipboard_change,
     read_clipboard_to_df,
+    IMAGES_PATH,
 )
 
 # ===== APP AUTH =====
@@ -20,7 +22,7 @@ PASSWORD = "1234"
 def navigate_to_report():
     print("📊 Navegando al módulo de informes...")
     wait_and_click("menu_informes.png", confidence=0.8, fallback=(150, 33))
-    time.sleep(0.5)
+    time.sleep(0.25)
     print("📂 Accediendo a 'Varios'...")
     pyautogui.press("down")
     time.sleep(0.1)
@@ -38,8 +40,8 @@ def navigate_to_report():
 def login_to_dapas():
     print("🚀 Abriendo DAPAS...")
     subprocess.Popen(["mstsc", r"C:\Users\ASUS\OneDrive\Escritorio\DAPAS.rdp"])
-    print("⏳ Esperando que SAG cargue (10s)...")
-    time.sleep(10)
+    print("⏳ Esperando que la interfaz de SAG cargue...")
+    wait_until_visible("sag_main_screen.png", timeout=120, confidence=0.7)
     print("🗂️ Seleccionando base de datos...")
     for _ in range(2):
         pyautogui.press("down")
@@ -55,9 +57,10 @@ def login_to_dapas():
     print("📤 Enviando credenciales...")
     pyautogui.press("enter")
     print("⚠️ Gestionando mensaje de sesión activa...")
-    time.sleep(5)
+    wait_until_visible("sag_welcome.png", timeout=120, confidence=0.7)
     pyautogui.press("enter")
     pyautogui.press("enter")
+    wait_until_visible("sag_loaded.png", timeout=120, confidence=0.7)
     print("✅ Inicio de sesión completado")
 
 
@@ -66,7 +69,10 @@ def select_bodega_04():
     # Abrir modal
     wait_and_click("seleccionar_bodegas.png", confidence=0.8)
     time.sleep(1)
+    reset_checkboxes("marcar_bodega.png", "desmarcar_bodega.png")
     # Seleccionar checkbox 04 (click preciso)
+    wait_and_click("seleccionar_bodegas.png", confidence=0.8)
+    time.sleep(1)
     print("🔍 Buscando checkbox de bodega 04...")
     location = wait_until_visible("bodega_04_checkbox.png", confidence=0.8)
     x, y = pyautogui.center(location)
@@ -77,13 +83,15 @@ def select_bodega_04():
     time.sleep(0.5)
     # Confirmar
     print("✅ Confirmando selección de bodega...")
-    wait_and_click("aceptar_bodegas.png", confidence=0.8)
+    wait_and_click("aceptar.png", confidence=0.8)
     time.sleep(0.2)
 
 
 def select_fuentes():
     print("📌 Seleccionando fuentes (CM, FM, NE)...")
-    # Abrir modal
+    wait_and_click("seleccionar_fuentes.png", confidence=0.8)
+    time.sleep(1)
+    reset_checkboxes("marcar_fuentes.png", "desmarcar_fuentes.png")
     wait_and_click("seleccionar_fuentes.png", confidence=0.8)
     time.sleep(1)
     fuentes = ["CM.png", "FM.png", "NE.png"]
@@ -96,9 +104,8 @@ def select_fuentes():
         print(f"🖱️ Coordenadas: ({x-115}, {y})")
         print(f"🖱️ Fuente seleccionada: {fuente}")
         time.sleep(0.5)
-    # Confirmar
     print("✅ Confirmando selección...")
-    wait_and_click("aceptar_fuentes.png", confidence=0.8)
+    wait_and_click("aceptar.png", confidence=0.8)
     time.sleep(0.2)
 
 
@@ -128,8 +135,6 @@ def flow_facturas_movimientos():
     fecha_inicio, fecha_fin = get_date_input()
     print("🔐 Iniciando sesión en DAPAS...")
     login_to_dapas()
-    time.sleep(2.5)
-    print("📊 Navegando al módulo de informes...")
     navigate_to_report()
     time.sleep(2.5)
     configure_report(fecha_inicio, fecha_fin)

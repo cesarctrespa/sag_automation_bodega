@@ -74,10 +74,10 @@ def wait_until_visible(image, timeout=600, confidence=CONFIDENCE, region=None):
                 print(f"👁️ Elemento visible: {image}")
                 return location
         except Exception as e:
-            print(f"⚠️ Error al escanear la pantalla: {e}")
+            print(f"⚠️ Esperando elemento visible: {image}")
         if time.time() - start > timeout:
             raise TimeoutError(f"⏱️ Tiempo de espera agotado para: {image}")
-        time.sleep(0.5)
+        time.sleep(2)
 
 
 def wait_for_clipboard_change(timeout=30):
@@ -103,7 +103,7 @@ def read_clipboard_to_df(raw_data):
     return df
 
 
-def scroll_until_image(image, arrow_pos, confidence=0.85, max_clicks=30):
+def scroll_until_image(image, arrow_pos, confidence=0.9, max_clicks=30):
     print(f"🔍 Buscando imagen con navegación: {image}")
     full_path = os.path.join(IMAGES_PATH, image)
     for i in range(max_clicks):
@@ -123,3 +123,18 @@ def scroll_until_image(image, arrow_pos, confidence=0.85, max_clicks=30):
         )
         time.sleep(0.2)
     raise Exception(f"❌ No se encontró la imagen: {image}")
+
+
+def reset_checkboxes(marcar_img, desmarcar_img):
+    print("🧹 Reiniciando selección (Marcar → Desmarcar)...")
+    location_marcar = wait_until_visible(marcar_img, confidence=0.8)
+    x1, y1 = pyautogui.center(location_marcar)
+    pyautogui.click(x1, y1)
+    time.sleep(1)
+    location_desmarcar = wait_until_visible(desmarcar_img, confidence=0.8)
+    x2, y2 = pyautogui.center(location_desmarcar)
+    pyautogui.click(x2, y2)
+    time.sleep(1)
+    print("✅ Selección reiniciada")
+    wait_and_click("aceptar.png", confidence=0.8)
+    time.sleep(1)
